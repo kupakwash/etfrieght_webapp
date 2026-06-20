@@ -1,0 +1,7 @@
+# Reference photographs retained locally; production-ready copies are in /assets.
+/*.jpeg
+
+# Local tooling and operating-system files
+.DS_Store
+Thumbs.db
+*.log
