@@ -53,12 +53,36 @@ const observer = new IntersectionObserver(
 );
 document.querySelectorAll(".reveal").forEach((item) => observer.observe(item));
 
-document.getElementById("quote-form").addEventListener("submit", (event) => {
+document.getElementById("quote-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const note = event.currentTarget.querySelector(".form-note");
-  note.textContent = "Thank you — your enquiry is ready for the ET Freight team.";
-  note.style.color = "#fff";
-  event.currentTarget.reset();
+  const form = event.currentTarget;
+  const note = form.querySelector(".form-note");
+  const button = form.querySelector("button[type=submit]");
+
+  button.disabled = true;
+  note.textContent = "Sending your enquiry…";
+
+  try {
+    const response = await fetch("https://formspree.io/f/xaqgydwk", {
+      method: "POST",
+      body: new FormData(form),
+      headers: { Accept: "application/json" },
+    });
+
+    if (response.ok) {
+      note.textContent = "Thank you — we'll be in touch within one business day.";
+      note.style.color = "#4ade80";
+      form.reset();
+    } else {
+      note.textContent = "Something went wrong. Please email us at info@etfreight.co.za";
+      note.style.color = "#f87171";
+    }
+  } catch {
+    note.textContent = "Connection error. Please email us at info@etfreight.co.za";
+    note.style.color = "#f87171";
+  } finally {
+    button.disabled = false;
+  }
 });
 
 document.getElementById("year").textContent = new Date().getFullYear();
